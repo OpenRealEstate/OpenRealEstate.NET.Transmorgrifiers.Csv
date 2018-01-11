@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Justin Adler</Authors>
+    <Company>OpenRealEstate</Company>
+    <Product>OpenRealEstate - .NET CSV Transmorgrifier</Product>
+    <PackageProjectUrl>https://github.com/OpenRealEstate/OpenRealEstate</PackageProjectUrl>
+    <PackageIconUrl>http://i.imgur.com/bR4Yf.jpg</PackageIconUrl>
+    <RepositoryUrl>https://github.com/OpenRealEstate/OpenRealEstate</RepositoryUrl>
+    <RepositoryType>C# .NET</RepositoryType>
+    <PackageTags>ore ore.net realestate openrealestate</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="6.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="OpenRealEstate.NET.Validation" Version="1.0.0-dev" />
+  </ItemGroup>
+
+</Project>
