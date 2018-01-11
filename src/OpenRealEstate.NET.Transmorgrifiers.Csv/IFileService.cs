@@ -5,6 +5,7 @@ namespace OpenRealEstate.NET.Transmorgrifiers.Csv
 {
     public interface IFileService
     {
-        Task<ParsedFileResult> ParseFileAsync(StreamReader streamReader);
+        Task<ParsedResult> ParseFileAsync(TextReader textReader);
+        Task<ParsedResult> ParseContentAsync(string csvContent);
     }
 }

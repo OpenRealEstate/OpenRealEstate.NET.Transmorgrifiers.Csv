@@ -1,23 +1,26 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Shouldly;
 using Xunit;
 
-namespace OpenRealEstate.NET.Transmorgrifiers.Csv.Tests
+namespace OpenRealEstate.NET.Transmorgrifiers.Csv.Tests.FileServiceTests
 {
-    public class FileServiceTests
+    public class ParseFileAsyncTests
     {
         [Theory]
         [InlineData("2017-09-24-ACT-sold.csv", 100, true)]
         [InlineData("2017-09-24-ACT-rent.csv", 188, false)]
-        public async Task GivenAFile_ParseFile_ReturnsACollectionOfListings(string fileName,
+        public async Task GivenAFile_ParseFileAsync_ReturnsACollectionOfListings(string fileName,
                                                                             int numberOfListings,
                                                                             bool isResidentialListing)
         {
             // Arrange.
             var fileService = new FileService();
-            ParsedFileResult result;
+            ParsedResult result;
             using (var streamReader = new StreamReader($"Sample Data\\{fileName}"))
             {
                 // Act.
@@ -48,11 +51,30 @@ namespace OpenRealEstate.NET.Transmorgrifiers.Csv.Tests
         }
 
         [Fact]
-        public async Task GivenAFileWithAMissingHeader_ParseFile_ReturnsAnError()
+        public async Task GivenAFileWithNoContent_ParseFileAsync_ReturnsAnError()
         {
             // Arrange.
             var fileService = new FileService();
-            ParsedFileResult result;
+            ParsedResult result;
+            using (var streamReader = new StreamReader("Sample Data\\EmptyFile.csv"))
+            {
+                // Act.
+                result = await fileService.ParseFileAsync(streamReader);
+            }
+
+            // Assert.
+            result.Listings.Count.ShouldBe(0);
+            result.Errors.Count.ShouldBe(1);
+            result.Errors.First().Message.ShouldBe("No header record was found.");
+            result.Errors.First().RowData.ShouldBeNull();
+        }
+
+        [Fact]
+        public async Task GivenAFileWithAMissingHeader_ParseFileAsync_ReturnsAnError()
+        {
+            // Arrange.
+            var fileService = new FileService();
+            ParsedResult result;
             using (var streamReader = new StreamReader("Sample Data\\2017-09-24-ACT-rent-missing-header.csv"))
             {
                 // Act.
@@ -67,11 +89,11 @@ namespace OpenRealEstate.NET.Transmorgrifiers.Csv.Tests
         }
 
         [Fact]
-        public async Task GivenAFileWithSomeBadPostcodeRowData_ParseFile_ReturnsAnError()
+        public async Task GivenAFileWithSomeBadPostcodeRowData_ParseFileAsync_ReturnsAnError()
         {
             // Arrange.
             var fileService = new FileService();
-            ParsedFileResult result;
+            ParsedResult result;
             using (var streamReader = new StreamReader("Sample Data\\2017-09-24-ACT-rent-bad-postcode-data.csv"))
             {
                 // Act.
@@ -86,11 +108,11 @@ namespace OpenRealEstate.NET.Transmorgrifiers.Csv.Tests
         }
 
         [Fact]
-        public async Task GivenAFileWithSomeBadPropertyTypeRowData_ParseFile_ReturnsAnError()
+        public async Task GivenAFileWithSomeBadPropertyTypeRowData_ParseFileAsync_ReturnsAnError()
         {
             // Arrange.
             var fileService = new FileService();
-            ParsedFileResult result;
+            ParsedResult result;
             using (var streamReader = new StreamReader("Sample Data\\2017-09-24-ACT-sold-bad-property-type.csv"))
             {
                 // Act.
@@ -105,11 +127,11 @@ namespace OpenRealEstate.NET.Transmorgrifiers.Csv.Tests
         }
 
         [Fact]
-        public async Task GivenAFileWithSomeBadRowDataField_ParseFile_ReturnsAnError()
+        public async Task GivenAFileWithSomeBadRowDataField_ParseFileAsync_ReturnsAnError()
         {
             // Arrange.
             var fileService = new FileService();
-            ParsedFileResult result;
+            ParsedResult result;
             using (var streamReader = new StreamReader("Sample Data\\2017-09-24-ACT-rent-bad-row-data.csv"))
             {
                 // Act.
@@ -124,11 +146,11 @@ namespace OpenRealEstate.NET.Transmorgrifiers.Csv.Tests
         }
 
         [Fact]
-        public async Task GivenAFileWithSomeMissingRowDataField_ParseFile_ReturnsAnError()
+        public async Task GivenAFileWithSomeMissingRowDataField_ParseFileAsync_ReturnsAnError()
         {
             // Arrange.
             var fileService = new FileService();
-            ParsedFileResult result;
+            ParsedResult result;
             using (var streamReader = new StreamReader("Sample Data\\2017-09-24-ACT-rent-missing-row-data.csv"))
             {
                 // Act.

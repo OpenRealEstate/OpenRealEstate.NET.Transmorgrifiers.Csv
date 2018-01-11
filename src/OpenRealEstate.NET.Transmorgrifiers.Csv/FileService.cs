@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
@@ -11,14 +12,14 @@ namespace OpenRealEstate.NET.Transmorgrifiers.Csv
 {
     public class FileService : IFileService
     {
-        public async Task<ParsedFileResult> ParseFileAsync(StreamReader streamReader)
+        public async Task<ParsedResult> ParseFileAsync(TextReader textReader)
         {
-            if (streamReader == null)
+            if (textReader == null)
             {
-                throw new ArgumentNullException(nameof(streamReader));
+                throw new ArgumentNullException(nameof(textReader));
             }
 
-            var result = new ParsedFileResult();
+            var result = new ParsedResult();
 
             try
             {
@@ -27,7 +28,7 @@ namespace OpenRealEstate.NET.Transmorgrifiers.Csv
                 var listings = new List<Core.Listing>();
 
                 // We need to read the header first to determine what type of file this is : sold or rent?.
-                using (var csvReader = new CsvReader(streamReader, configuration))
+                using (var csvReader = new CsvReader(textReader, configuration))
                 {
                     csvReader.Read();
                     csvReader.ReadHeader();
@@ -80,16 +81,29 @@ namespace OpenRealEstate.NET.Transmorgrifiers.Csv
             return result;
         }
 
-        private Configuration InitializeCsvReaderConfiguration(ParsedFileResult parsedFileResult)
+        public Task<ParsedResult> ParseContentAsync(string csvContent)
         {
-            if (parsedFileResult == null)
+            if (string.IsNullOrWhiteSpace(csvContent))
             {
-                throw new ArgumentNullException(nameof(parsedFileResult));
+                throw new ArgumentException(nameof(csvContent));
+            }
+
+            using (var textReader = new StringReader(csvContent))
+            {
+                return ParseFileAsync(textReader);
+            }
+        }
+
+        private Configuration InitializeCsvReaderConfiguration(ParsedResult parsedResult)
+        {
+            if (parsedResult == null)
+            {
+                throw new ArgumentNullException(nameof(parsedResult));
             }
 
             void BadDataFound(IReadingContext context)
             {
-                parsedFileResult.Errors.Add(new Error
+                parsedResult.Errors.Add(new Error
                 {
                     Message = $"Bad data found on row '{context.RawRow}'",
                     RowData = context.RawRecord
@@ -100,7 +114,7 @@ namespace OpenRealEstate.NET.Transmorgrifiers.Csv
                                    int index,
                                    IReadingContext context)
             {
-                parsedFileResult.Errors.Add(new Error
+                parsedResult.Errors.Add(new Error
                 {
                     Message = $"Field with names ['{string.Join("', '", headerNames)}'] at index '{index}' was not found.",
                     RowData = context.RawRecord
@@ -109,7 +123,7 @@ namespace OpenRealEstate.NET.Transmorgrifiers.Csv
 
             void ReadingExceptionOccured(CsvHelperException exception)
             {
-                parsedFileResult.Errors.Add(new Error
+                parsedResult.Errors.Add(new Error
                 {
                     Message = $"Reading exception: {exception.Message}",
                     RowData = exception.ReadingContext.RawRecord
@@ -153,7 +167,7 @@ namespace OpenRealEstate.NET.Transmorgrifiers.Csv
         }
 
         private void ValidateListings(IEnumerable<Core.Listing> listings,
-                                      ParsedFileResult result)
+                                      ParsedResult result)
         {
             if (listings == null)
             {
