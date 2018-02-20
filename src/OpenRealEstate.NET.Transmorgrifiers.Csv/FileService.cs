@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
-using OpenRealEstate.NET.Validation;
+using OpenRealEstate.Validation;
 
-namespace OpenRealEstate.NET.Transmorgrifiers.Csv
+namespace OpenRealEstate.Transmorgrifiers.Csv
 {
     public class FileService : IFileService
     {

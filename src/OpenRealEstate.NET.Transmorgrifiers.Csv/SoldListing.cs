@@ -1,8 +1,8 @@
 ﻿using System;
-using OpenRealEstate.NET.Core;
-using OpenRealEstate.NET.Core.Residential;
+using OpenRealEstate.Core;
+using OpenRealEstate.Core.Residential;
 
-namespace OpenRealEstate.NET.Transmorgrifiers.Csv
+namespace OpenRealEstate.Transmorgrifiers.Csv
 {
     public class SoldListing : Listing
     {

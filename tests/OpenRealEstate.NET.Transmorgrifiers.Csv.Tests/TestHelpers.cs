@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using OpenRealEstate.NET.Core;
-using OpenRealEstate.NET.Core.Rental;
-using OpenRealEstate.NET.Core.Residential;
+using OpenRealEstate.Core;
+using OpenRealEstate.Core.Rental;
+using OpenRealEstate.Core.Residential;
 using Shouldly;
-using ListingAgent = OpenRealEstate.NET.Core.Agent;
+using ListingAgent = OpenRealEstate.Core.Agent;
 
-namespace OpenRealEstate.NET.Transmorgrifiers.Csv.Tests
+namespace OpenRealEstate.Transmorgrifiers.Csv.Tests
 {
     public static class TestHelpers
     {

@@ -4,7 +4,7 @@ using CsvHelper;
 using Shouldly;
 using Xunit;
 
-namespace OpenRealEstate.NET.Transmorgrifiers.Csv.Tests
+namespace OpenRealEstate.Transmorgrifiers.Csv.Tests
 {
     public class SoldListingCsvMapTests
     {

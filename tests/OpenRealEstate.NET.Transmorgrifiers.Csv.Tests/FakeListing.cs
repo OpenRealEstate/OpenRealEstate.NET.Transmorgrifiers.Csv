@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OpenRealEstate.NET.Transmorgrifiers.Csv.Tests
+namespace OpenRealEstate.Transmorgrifiers.Csv.Tests
 {
     public class FakeListing : Listing
     {

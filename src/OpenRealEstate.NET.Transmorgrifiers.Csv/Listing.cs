@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenRealEstate.NET.Core;
-using CsvAgent = OpenRealEstate.NET.Transmorgrifiers.Csv.Agent;
+using OpenRealEstate.Core;
+using CsvAgent = OpenRealEstate.Transmorgrifiers.Csv.Agent;
 
-namespace OpenRealEstate.NET.Transmorgrifiers.Csv
+namespace OpenRealEstate.Transmorgrifiers.Csv
 {
     public abstract class Listing
     {

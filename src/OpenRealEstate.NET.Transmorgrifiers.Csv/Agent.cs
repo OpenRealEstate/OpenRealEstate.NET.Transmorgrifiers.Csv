@@ -1,4 +1,4 @@
-﻿namespace OpenRealEstate.NET.Transmorgrifiers.Csv
+﻿namespace OpenRealEstate.Transmorgrifiers.Csv
 {
     public class Agent
     {

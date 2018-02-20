@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 
-namespace OpenRealEstate.NET.Transmorgrifiers.Csv
+namespace OpenRealEstate.Transmorgrifiers.Csv
 {
     public interface IFileService
     {

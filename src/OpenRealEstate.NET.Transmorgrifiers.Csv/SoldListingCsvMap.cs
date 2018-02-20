@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using CsvHelper.Configuration;
 
-namespace OpenRealEstate.NET.Transmorgrifiers.Csv
+namespace OpenRealEstate.Transmorgrifiers.Csv
 {
     public sealed class SoldListingCsvMap : ClassMap<SoldListing>
     {

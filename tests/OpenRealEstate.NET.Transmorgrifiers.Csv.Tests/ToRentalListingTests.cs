@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FizzWare.NBuilder;
-using OpenRealEstate.NET.Core;
-using OpenRealEstate.NET.Core.Rental;
+using OpenRealEstate.Core;
+using OpenRealEstate.Core.Rental;
 using Xunit;
-using ListingAgent = OpenRealEstate.NET.Core.Agent;
+using ListingAgent = OpenRealEstate.Core.Agent;
 
-namespace OpenRealEstate.NET.Transmorgrifiers.Csv.Tests
+namespace OpenRealEstate.Transmorgrifiers.Csv.Tests
 {
     public class ToRentalListingTests
     {

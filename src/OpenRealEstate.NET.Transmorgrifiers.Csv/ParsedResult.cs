@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace OpenRealEstate.NET.Transmorgrifiers.Csv
+namespace OpenRealEstate.Transmorgrifiers.Csv
 {
     public class ParsedResult
     {

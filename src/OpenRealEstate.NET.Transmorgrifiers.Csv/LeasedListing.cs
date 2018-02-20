@@ -1,8 +1,8 @@
 ﻿using System;
-using OpenRealEstate.NET.Core;
-using OpenRealEstate.NET.Core.Rental;
+using OpenRealEstate.Core;
+using OpenRealEstate.Core.Rental;
 
-namespace OpenRealEstate.NET.Transmorgrifiers.Csv
+namespace OpenRealEstate.Transmorgrifiers.Csv
 {
     public class LeasedListing : Listing
     {

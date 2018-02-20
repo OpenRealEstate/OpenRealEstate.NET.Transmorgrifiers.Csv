@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Shouldly;
 using Xunit;
 
-namespace OpenRealEstate.NET.Transmorgrifiers.Csv.Tests.FileServiceTests
+namespace OpenRealEstate.Transmorgrifiers.Csv.Tests.FileServiceTests
 {
     public class ParseContentAsyncTests
     {
