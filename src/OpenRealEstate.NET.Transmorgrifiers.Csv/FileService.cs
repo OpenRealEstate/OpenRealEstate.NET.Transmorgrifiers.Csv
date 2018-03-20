@@ -1,12 +1,11 @@
-﻿using System;
+﻿using CsvHelper;
+using CsvHelper.Configuration;
+using OpenRealEstate.Validation;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using CsvHelper;
-using CsvHelper.Configuration;
-using OpenRealEstate.Validation;
 
 namespace OpenRealEstate.Transmorgrifiers.Csv
 {
@@ -101,7 +100,7 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
                 throw new ArgumentNullException(nameof(parsedResult));
             }
 
-            void BadDataFound(IReadingContext context)
+            void BadDataFound(ReadingContext context)
             {
                 parsedResult.Errors.Add(new Error
                 {
@@ -112,7 +111,7 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
 
             void MissingFieldFound(string[] headerNames,
                                    int index,
-                                   IReadingContext context)
+                                   ReadingContext context)
             {
                 parsedResult.Errors.Add(new Error
                 {
