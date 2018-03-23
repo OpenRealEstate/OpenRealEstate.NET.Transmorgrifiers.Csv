@@ -1,15 +1,15 @@
-﻿using System;
-using OpenRealEstate.Core;
+﻿using OpenRealEstate.Core;
 using OpenRealEstate.Core.Residential;
+using System;
 
 namespace OpenRealEstate.Transmorgrifiers.Csv
 {
-    public class SoldListing : Listing
+    internal class CsvResidentialListing : CsvListing
     {
         public DateTime SoldOn { get; set; }
         public int SoldPrice { get; set; }
 
-        public override Core.Listing ToOreListing()
+        public override Listing ToOreListing()
         {
             var listing = new ResidentialListing();
 
@@ -18,6 +18,7 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
             listing.CreatedOn = SoldOn;
             listing.UpdatedOn = SoldOn;
             listing.StatusType = StatusType.Sold;
+            listing.SourceStatus = StatusType.Sold.ToString();
 
             listing.PropertyType = PropertyTypeHelpers.ToPropertyType(PropertyType);
 

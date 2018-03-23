@@ -1,12 +1,14 @@
-﻿using System;
+﻿using OpenRealEstate.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenRealEstate.Core;
-using CsvAgent = OpenRealEstate.Transmorgrifiers.Csv.Agent;
 
 namespace OpenRealEstate.Transmorgrifiers.Csv
 {
-    public abstract class Listing
+    /// <summary>
+    /// DTO class to help convert between csv-text <-> OpenRealEstate Listing.
+    /// </summary>
+    internal abstract class CsvListing
     {
         public int Id { get; set; }
         public string StateCode { get; set; }
@@ -21,11 +23,14 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
         public byte Bathrooms { get; set; }
         public byte CarSpaces { get; set; }
         public string AgencyName { get; set; }
-        public IEnumerable<CsvAgent> Agents { get; set; } = Enumerable.Empty<CsvAgent>();
+        public string Agent1Name { get; set; }
+        public string Agent1Phone { get; set; }
+        public string Agent2Name { get; set; }
+        public string Agent2Phone { get; set; }
 
-        public abstract Core.Listing ToOreListing();
+        public abstract Listing ToOreListing();
 
-        protected void CopyOverListingData(Core.Listing listing)
+        protected void CopyOverListingData(Listing listing)
         {
             if (listing == null)
             {
@@ -42,22 +47,36 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
                 Postcode = Postcode,
                 Latitude = Latitude,
                 Longitude = Longitude,
-                CountryIsoCode = "AU",
+                CountryIsoCode = "AU"
             };
 
             // Sets the street address, based on the existing location data.
             CalculateStreetNumberAndStreet(listing.Address);
 
-            listing.Agents = (from agent in Agents
-                              select new Core.Agent
+            var agents = new List<Tuple<string, string>>();
+
+            if (!string.IsNullOrWhiteSpace(Agent1Name) && 
+                !string.IsNullOrWhiteSpace(Agent1Phone))
+            {
+                agents.Add(new Tuple<String, string>(Agent1Name, Agent1Phone));
+            }
+
+            if (!string.IsNullOrWhiteSpace(Agent2Name) &&
+                !string.IsNullOrWhiteSpace(Agent2Phone))
+            {
+                agents.Add(new Tuple<String, string>(Agent2Name, Agent2Phone));
+
+            }
+            listing.Agents = (from agent in agents
+                              select new Agent
                               {
-                                  Name = agent.Name,
+                                  Name = agent.Item1,
                                   Communications = new List<Communication>
                                   {
                                       new Communication
                                       {
                                           CommunicationType = CommunicationType.Mobile,
-                                          Details = agent.PhoneNumber
+                                          Details = agent.Item2
                                       }
                                   }
                               }).ToArray();
@@ -85,8 +104,8 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
                                   ? null
                                   : Street.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 
-            var streetNumber = string.Empty;
-            var street = string.Empty;
+            string streetNumber = null;
+            string street = null;
 
             if (streetSplit != null &&
                 streetSplit.Any())
@@ -107,6 +126,10 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
             // Finally, lets remember this.
             address.StreetNumber = streetNumber;
             address.Street = street;
+
+            // Don't forget to set the DisplayAddress now that we have completed setting up the address components.
+            address.DisplayAddress = address.ToFormattedAddress(isPostCodeIncluded: true);
+
         }
     }
 }

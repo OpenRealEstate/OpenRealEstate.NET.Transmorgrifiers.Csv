@@ -10,6 +10,8 @@ environment:
     secure: jfcUvHZhgnUboplqTBDWr8mG5PIlrgBv5TA2fhhop4ZSiDxskyy+RtYyeHoduJFR
   myget_apiKey:
     secure: AguzfXNvHBkkDebTyWHK7o9OC5YL3eszT6u7PnzGq2G7ozdUypDlGGpcFsTRYHEc
+  codecov_token:
+    secure: nVwlr0XGlvuj7lmq1Fh/gZGrwyAMIVuCwmAIGa0Q+ibzBZaeHpjhwp0XdQIrjhH2
 
 # Override the 'version' if this is a GH-tag-commit -or- this is a custom branch (i.e not 'master').
 init:
@@ -24,15 +26,21 @@ init:
 before_build:
   # Display .NET Core version
   - cmd: dotnet --info
+  # Install Codecov prerequisite
+  - choco install opencover.portable
+  - choco install codecov
   # Display minimal restore text
   - cmd: dotnet restore --verbosity quiet
 
 build_script:
-  - dotnet build -c %CONFIGURATION% -v minimal /p:Version=%APPVEYOR_BUILD_VERSION%
+  - dotnet build -c %CONFIGURATION% -v minimal /p:Version=%APPVEYOR_BUILD_VERSION% /p:DebugType=full --no-restore
 
 test_script:
-  - dotnet test tests\OpenRealEstate.NET.Transmorgrifiers.CSV.Tests -c %CONFIGURATION% -v minimal --no-restore --no-build
-  - dotnet pack -c %CONFIGURATION% /p:Version=%APPVEYOR_BUILD_VERSION% --no-build
+  - OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test tests\OpenRealEstate.Transmorgrifiers.Csv.Tests -c %CONFIGURATION% -v minimal --no-restore --no-build " -filter:"+[OpenRealEstate.*]* -[OpenRealEstate.*.Tests]*" -output:".\coverage.xml" -oldstyle
+
+after_test:
+  - codecov -f "coverage.xml" -t $(codecov_token)
+  - dotnet pack -c %CONFIGURATION% /p:Version=%APPVEYOR_BUILD_VERSION% --no-restore --no-build
 
 artifacts:
   - path: '**\*.nupkg'

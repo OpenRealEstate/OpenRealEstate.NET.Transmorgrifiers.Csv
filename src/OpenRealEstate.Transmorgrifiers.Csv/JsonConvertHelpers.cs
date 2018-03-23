@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.Collections.Generic;
 
 namespace OpenRealEstate.Transmorgrifiers.Csv
 {
-    public static class JsonConvertHelpers
+    internal static class JsonConvertHelpers
     {
         private static JsonSerializerSettings JsonSerializerSettings => new JsonSerializerSettings
         {
@@ -15,12 +15,12 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
             Formatting = Formatting.Indented
         };
 
-        public static string SerializeObject(Core.Listing listing)
+        internal static string SerializeObject(OpenRealEstate.Core.Listing listing)
         {
             return JsonConvert.SerializeObject(listing, JsonSerializerSettings);
         }
 
-        public static string SerializeObject(IEnumerable<Core.Listing> listings)
+        internal static string SerializeObject(IEnumerable<OpenRealEstate.Core.Listing> listings)
         {
             return JsonConvert.SerializeObject(listings, JsonSerializerSettings);
         }

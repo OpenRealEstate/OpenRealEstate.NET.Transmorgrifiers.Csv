@@ -4,7 +4,7 @@
 
 This is a transmogrifier (i.e. converter) that converts a specific CSV file to an OpenRealEstate model.
 
-[![Build status](https://ci.appveyor.com/api/projects/status/l23plp5rerlmq0nw/branch/master?svg=true)](https://ci.appveyor.com/project/PureKrome/openrealestate-net-transmorgrifiers-csv) [![NuGet](https://img.shields.io/nuget/v/OpenRealEstate.NET.Transmorgrifiers.CSV.svg)](https://www.nuget.org/packages/OpenRealEstate.NET.Transmorgrifiers.CSV) [![NuGet](https://img.shields.io/nuget/dt/OpenRealEstate.NET.Transmorgrifiers.CSV.svg)](https://www.nuget.org/packages/OpenRealEstate.NET.Transmorgrifiers.CSV) [![MyGet Pre Release](https://img.shields.io/myget/openrealestate-net/vpre/OpenRealEstate.NET.Transmorgrifiers.CSV.svg)]()
+[![Build status](https://ci.appveyor.com/api/projects/status/l23plp5rerlmq0nw/branch/master?svg=true)](https://ci.appveyor.com/project/PureKrome/openrealestate-net-transmorgrifiers-csv) [![NuGet](https://img.shields.io/nuget/v/OpenRealEstate.NET.Transmorgrifiers.CSV.svg)](https://www.nuget.org/packages/OpenRealEstate.NET.Transmorgrifiers.CSV) [![NuGet](https://img.shields.io/nuget/dt/OpenRealEstate.NET.Transmorgrifiers.CSV.svg)](https://www.nuget.org/packages/OpenRealEstate.NET.Transmorgrifiers.CSV) [![MyGet Pre Release](https://img.shields.io/myget/openrealestate-net/vpre/OpenRealEstate.NET.Transmorgrifiers.CSV.svg)]() [![codecov](https://codecov.io/gh/OpenRealEstate/OpenRealEstate.NET.Transmorgrifiers.Csv/branch/master/graph/badge.svg)](https://codecov.io/gh/OpenRealEstate/OpenRealEstate.NET.Transmorgrifiers.Csv)
 
 ---
 
@@ -18,6 +18,7 @@ The csv header/format is as follows:
 ### Rent file
 `"id","state_code","lat","lng","image","type","address","suburb_name","postcode","bedrooms","bathrooms","car_spaces","rent_date","rent_price","agency_name","agent_name","agent_phone","agent_2_name","agent_2_phone"`
 
+Header casing is can be either upper/lower/mixed. Header ORDER is not important for _reading_ either.
 ---
 
 ## Contributing

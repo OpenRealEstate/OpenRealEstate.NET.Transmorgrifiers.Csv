@@ -1,6 +1,6 @@
 ﻿namespace OpenRealEstate.Transmorgrifiers.Csv
 {
-    public class Agent
+    internal class CsvAgent
     {
         public string Name { get; set; }
         public string PhoneNumber { get; set; }

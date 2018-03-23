@@ -22,10 +22,25 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\OpenRealEstate.NET.Transmorgrifiers.Csv\OpenRealEstate.Transmorgrifiers.Csv.csproj" />
+    <ProjectReference Include="..\..\src\OpenRealEstate.Transmorgrifiers.Csv\OpenRealEstate.Transmorgrifiers.Csv.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Sample Data\2017-09-24-ACT-rent-uppercase-headers.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Sample Data\2017-09-24-ACT-sold-address-is-to-be-replaced.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Sample Data\2017-09-24-ACT-sold-muddled-columns.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Sample Data\2017-09-24-ACT-sold-uppercase-headers.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Sample Data\2017-09-24-ACT-sold-missing-row-dat.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Sample Data\EmptyFile.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

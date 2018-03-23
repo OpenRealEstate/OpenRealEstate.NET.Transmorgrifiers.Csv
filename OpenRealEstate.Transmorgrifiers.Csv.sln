@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRealEstate.Transmorgrifiers.Csv", "src\OpenRealEstate.NET.Transmorgrifiers.Csv\OpenRealEstate.Transmorgrifiers.Csv.csproj", "{B9138069-41B7-4475-AB5F-F43D450EEC10}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRealEstate.Transmorgrifiers.Csv", "src\OpenRealEstate.Transmorgrifiers.Csv\OpenRealEstate.Transmorgrifiers.Csv.csproj", "{B9138069-41B7-4475-AB5F-F43D450EEC10}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRealEstate.Transmorgrifiers.Csv.Tests", "tests\OpenRealEstate.NET.Transmorgrifiers.Csv.Tests\OpenRealEstate.Transmorgrifiers.Csv.Tests.csproj", "{311CD3DF-482D-4157-972B-F7136F89DA27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRealEstate.Transmorgrifiers.Csv.Tests", "tests\OpenRealEstate.Transmorgrifiers.Csv.Tests\OpenRealEstate.Transmorgrifiers.Csv.Tests.csproj", "{311CD3DF-482D-4157-972B-F7136F89DA27}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

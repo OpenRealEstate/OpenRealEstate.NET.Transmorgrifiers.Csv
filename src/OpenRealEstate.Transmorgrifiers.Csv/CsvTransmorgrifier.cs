@@ -1,5 +1,7 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
+using OpenRealEstate.Core;
+using OpenRealEstate.Transmorgrifiers.Core;
 using OpenRealEstate.Validation;
 using System;
 using System.Collections.Generic;
@@ -9,9 +11,30 @@ using System.Threading.Tasks;
 
 namespace OpenRealEstate.Transmorgrifiers.Csv
 {
-    public class FileService : IFileService
+    public class CsvTransmorgrifier : ICsvTransmorgrifier
     {
-        public async Task<ParsedResult> ParseFileAsync(TextReader textReader)
+        /// <inheritdoc />
+        public string Name => "CSV";
+
+        /// <inheritdoc />
+        public ParsedResult Parse(string data, 
+                                  Listing existingListing = null, 
+                                  bool areBadCharactersRemoved = false)
+        {
+            if (string.IsNullOrWhiteSpace(data))
+            {
+                throw new ArgumentException(nameof(data));
+            }
+
+            using (var stringReader = new StringReader(data))
+            {
+                return Task.Run(() => ParseAsync(stringReader))
+                            .GetAwaiter()
+                            .GetResult();
+            }
+        }
+
+        public async Task<ParsedResult> ParseAsync(TextReader textReader)
         {
             if (textReader == null)
             {
@@ -24,7 +47,7 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
             {
                 var configuration = InitializeCsvReaderConfiguration(result);
 
-                var listings = new List<Core.Listing>();
+                var listingResults = new List<ListingResult>();
 
                 // We need to read the header first to determine what type of file this is : sold or rent?.
                 using (var csvReader = new CsvReader(textReader, configuration))
@@ -34,22 +57,20 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
                     var headers = csvReader.Context.HeaderRecord;
 
                     bool isASoldListing;
-                    if (headers.Contains("sold_date"))
+                    if (headers.Contains("sold_date", StringComparer.OrdinalIgnoreCase))
                     {
                         isASoldListing = true;
                     }
-                    else if (headers.Contains("rent_date"))
+                    else if (headers.Contains("rent_date", StringComparer.OrdinalIgnoreCase))
                     {
                         isASoldListing = false;
                     }
                     else
                     {
                         // No valid headers found.
-                        result.Errors.Add(new Error
-                        {
-                            Message =
-                                "Listing csv header is missing the field 'sold_date' or 'rent_date'. As such, we cannot determine what type of csv file this is suppose to be."
-                        });
+                        var parsedError = new ParsedError("Listing csv header is missing the field 'sold_date' or 'rent_date'. As such, we cannot determine what type of csv file this is suppose to be.",
+                                                          "csv headers");
+                        result.Errors.Add(parsedError);
                         return result;
                     }
 
@@ -61,36 +82,25 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
                         // NOTE: the listing is null if it failed to read/parse the line.
                         if (listing != null)
                         {
-                            listings.Add(listing);
+                            listingResults.Add(new ListingResult
+                            {
+                                Listing = listing,
+                                SourceData = csvReader.ToString()
+                            });
                         }
                     }
 
                     // Validate all the listings that were parsed.
-                    ValidateListings(listings, result);
+                    ValidateListings(listingResults, result);
                 }
             }
             catch (Exception exception)
             {
-                result.Errors.Add(new Error
-                {
-                    Message = exception.Message
-                });
+                var parsedError = new ParsedError(exception.Message, "reading csv data.");
+                result.Errors.Add(parsedError);
             }
 
             return result;
-        }
-
-        public Task<ParsedResult> ParseContentAsync(string csvContent)
-        {
-            if (string.IsNullOrWhiteSpace(csvContent))
-            {
-                throw new ArgumentException(nameof(csvContent));
-            }
-
-            using (var textReader = new StringReader(csvContent))
-            {
-                return ParseFileAsync(textReader);
-            }
         }
 
         private Configuration InitializeCsvReaderConfiguration(ParsedResult parsedResult)
@@ -102,75 +112,66 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
 
             void BadDataFound(ReadingContext context)
             {
-                parsedResult.Errors.Add(new Error
-                {
-                    Message = $"Bad data found on row '{context.RawRow}'",
-                    RowData = context.RawRecord
-                });
+                var parsedError = new ParsedError($"Bad data found on row '{context.RawRow}'", context.RawRecord);
+                parsedResult.Errors.Add(parsedError);
             }
 
             void MissingFieldFound(string[] headerNames,
                                    int index,
                                    ReadingContext context)
             {
-                parsedResult.Errors.Add(new Error
-                {
-                    Message = $"Field with names ['{string.Join("', '", headerNames)}'] at index '{index}' was not found.",
-                    RowData = context.RawRecord
-                });
+                var parsedError = new ParsedError($"Field with names ['{string.Join("', '", headerNames)}'] at index '{index}' was not found.", context.RawRecord);
+                parsedResult.Errors.Add(parsedError);
             }
 
             void ReadingExceptionOccured(CsvHelperException exception)
             {
-                parsedResult.Errors.Add(new Error
-                {
-                    Message = $"Reading exception: {exception.Message}",
-                    RowData = exception.ReadingContext.RawRecord
-                });
+                var parsedError = new ParsedError($"Reading exception: {exception.Message}", exception.ReadingContext.RawRecord);
+                parsedResult.Errors.Add(parsedError);
             }
 
             var configuration = new Configuration
             {
                 HasHeaderRecord = true,
+                PrepareHeaderForMatch = header => header.ToLowerInvariant(),
                 BadDataFound = BadDataFound,
                 MissingFieldFound = MissingFieldFound,
                 ReadingExceptionOccurred = ReadingExceptionOccured
             };
 
-            configuration.RegisterClassMap<SoldListingCsvMap>();
-            configuration.RegisterClassMap<LeasedListingCsvMap>();
+            configuration.RegisterClassMap<CsvResidentialListingCsvMap>();
+            configuration.RegisterClassMap<CsvRentalListingCsvMap>();
 
             return configuration;
         }
 
-        private Core.Listing ParseCsvDataRow(bool isASoldListing,
-                                             CsvReader csvReader)
+        private Listing ParseCsvDataRow(bool isASoldListing,
+                                        CsvReader csvReader)
         {
             if (csvReader == null)
             {
                 throw new ArgumentNullException(nameof(csvReader));
             }
 
-            Listing listing;
+            CsvListing listing;
             if (isASoldListing)
             {
-                //csvReader.Configuration.RegisterClassMap<SoldListingCsvMap>();
-                listing = csvReader.GetRecord<SoldListing>();
+                listing = csvReader.GetRecord<CsvResidentialListing>();
             }
             else
             {
-                listing = csvReader.GetRecord<LeasedListing>();
+                listing = csvReader.GetRecord<CsvRentalListing>();
             }
 
             return listing?.ToOreListing();
         }
 
-        private void ValidateListings(IEnumerable<Core.Listing> listings,
+        private void ValidateListings(IEnumerable<ListingResult> listingResults,
                                       ParsedResult result)
         {
-            if (listings == null)
+            if (listingResults == null)
             {
-                throw new ArgumentNullException(nameof(listings));
+                throw new ArgumentNullException(nameof(listingResults));
             }
 
             if (result == null)
@@ -178,12 +179,12 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
                 throw new ArgumentNullException(nameof(result));
             }
 
-            foreach (var listing in listings)
+            foreach (var listingResult in listingResults)
             {
-                var validationResult = ValidatorMediator.Validate(listing);
+                var validationResult = ValidatorMediator.Validate(listingResult.Listing);
                 if (validationResult.IsValid)
                 {
-                    result.Listings.Add(listing);
+                    result.Listings.Add(listingResult);
                 }
                 else
                 {
@@ -191,12 +192,9 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
                     var errorMessages = string.Join(". ",
                                                     (from error in validationResult.Errors
                                                      select error.ErrorMessage));
-                    var errorMessage = $"Listing '{listing}' failed validation: {errorMessages}";
-                    result.Errors.Add(new Error
-                    {
-                        Message = errorMessage,
-                        RowData = JsonConvertHelpers.SerializeObject(listing)
-                    });
+                    var errorMessage = $"Listing '{listingResult.Listing}' failed validation: {errorMessages}";
+                    var rowData = JsonConvertHelpers.SerializeObject(listingResult.Listing);
+                    result.Errors.Add(new ParsedError(errorMessage, rowData));
                 }
             }
         }

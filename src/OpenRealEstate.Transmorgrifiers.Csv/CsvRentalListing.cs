@@ -1,15 +1,15 @@
-﻿using System;
-using OpenRealEstate.Core;
+﻿using OpenRealEstate.Core;
 using OpenRealEstate.Core.Rental;
+using System;
 
 namespace OpenRealEstate.Transmorgrifiers.Csv
 {
-    public class LeasedListing : Listing
+    internal class CsvRentalListing : CsvListing
     {
         public DateTime LeasedOn { get; set; }
         public int RentPrice { get; set; }
 
-        public override Core.Listing ToOreListing()
+        public override Listing ToOreListing()
         {
             var listing = new RentalListing();
 
@@ -18,6 +18,7 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
             listing.CreatedOn = LeasedOn;
             listing.UpdatedOn = LeasedOn;
             listing.StatusType = StatusType.Leased;
+            listing.SourceStatus = StatusType.Leased.ToString();
 
             listing.PropertyType = PropertyTypeHelpers.ToPropertyType(PropertyType);
 
