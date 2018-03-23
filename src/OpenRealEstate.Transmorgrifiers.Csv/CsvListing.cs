@@ -113,7 +113,7 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
                 if (streetSplit.Length == 1)
                 {
                     // Only 1 item, so lets just use that for the street NAME.
-                    street = string.Join(" ", streetSplit);
+                    street = streetSplit.First();
                 }
                 else
                 {

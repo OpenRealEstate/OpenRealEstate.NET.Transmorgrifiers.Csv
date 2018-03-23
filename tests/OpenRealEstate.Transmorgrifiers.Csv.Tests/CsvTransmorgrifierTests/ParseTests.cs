@@ -16,6 +16,7 @@ namespace OpenRealEstate.Transmorgrifiers.Csv.Tests.FileServiceTests
                 {
                     // Address, street number, street
                     { null, null, null },
+                    { "smithstreet", null, "smithstreet" }, // Street Address is only one word (e.g. street number was left out on purpose)
                     { "1 smith street", "1", "smith street" },
                     { "smith street", "smith", "street" },
                     { "1a smith street", "1a", "smith street" },
