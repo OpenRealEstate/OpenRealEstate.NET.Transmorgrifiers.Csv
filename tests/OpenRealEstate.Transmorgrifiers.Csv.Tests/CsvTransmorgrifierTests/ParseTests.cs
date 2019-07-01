@@ -1,7 +1,8 @@
-﻿using OpenRealEstate.Core;
+using OpenRealEstate.Core;
 using Shouldly;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace OpenRealEstate.Transmorgrifiers.Csv.Tests.FileServiceTests
@@ -32,9 +33,9 @@ namespace OpenRealEstate.Transmorgrifiers.Csv.Tests.FileServiceTests
         [InlineData("2017-09-24-ACT-sold-uppercase-headers.csv", 100, true)]
         [InlineData("2017-09-24-ACT-rent.csv", 188, false)]
         [InlineData("2017-09-24-ACT-rent-uppercase-headers.csv", 188, false)]
-        public void GivenAFile_ParseContentAsync_ReturnsACollectionOfListings(string fileName,
-                                                                              int numberOfListings,
-                                                                              bool isResidentialListing)
+        public async Task GivenAFile_ParseAsync_ReturnsACollectionOfListings(string fileName,
+                                                                             int numberOfListings,
+                                                                             bool isResidentialListing)
         {
             // Arrange.
             var content = File.ReadAllText($"Sample Data\\{fileName}");
@@ -42,7 +43,7 @@ namespace OpenRealEstate.Transmorgrifiers.Csv.Tests.FileServiceTests
             var csvTransmorgrifier = new CsvTransmorgrifier();
 
             // Act.
-            var result = csvTransmorgrifier.Parse(content);
+            var result = await csvTransmorgrifier.ParseAsync(content);
 
             // Assert.
             result.Listings.Count.ShouldBe(numberOfListings);
@@ -69,9 +70,9 @@ namespace OpenRealEstate.Transmorgrifiers.Csv.Tests.FileServiceTests
 
         [Theory]
         [MemberData(nameof(AddressData))]
-        public void GivenASingleRow_Parse_ReturnsACollectionOfListings(string address,
-                                                                       string streetNumber,
-                                                                       string street)
+        public async Task GivenASingleRow_ParseAsync_ReturnsACollectionOfListings(string address,
+                                                                                  string streetNumber,
+                                                                                  string street)
         {
             // Arrange.
             var content = File.ReadAllText($"Sample Data\\2017-09-24-ACT-sold-address-is-to-be-replaced.csv");
@@ -80,7 +81,7 @@ namespace OpenRealEstate.Transmorgrifiers.Csv.Tests.FileServiceTests
             var csvTransmorgrifier = new CsvTransmorgrifier();
 
             // Act.
-            var result = csvTransmorgrifier.Parse(content);
+            var result = await csvTransmorgrifier.ParseAsync(content);
 
             // Assert.
             result.Listings.Count.ShouldBe(1);

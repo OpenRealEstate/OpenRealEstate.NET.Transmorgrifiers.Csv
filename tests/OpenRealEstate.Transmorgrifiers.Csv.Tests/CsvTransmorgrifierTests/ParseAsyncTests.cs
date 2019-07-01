@@ -1,4 +1,4 @@
-﻿using OpenRealEstate.Core;
+using OpenRealEstate.Core;
 using OpenRealEstate.Transmorgrifiers.Core;
 using Shouldly;
 using System.IO;
@@ -22,12 +22,12 @@ namespace OpenRealEstate.Transmorgrifiers.Csv.Tests.FileServiceTests
             // Arrange.
             var csvTransmorgrifier = new CsvTransmorgrifier();
             ParsedResult result;
-            using (var streamReader = new StreamReader($"Sample Data\\{fileName}"))
-            {
-                // Act.
-                result = await csvTransmorgrifier.ParseAsync(streamReader);
-            }
 
+            var data = File.ReadAllText($"Sample Data\\{fileName}");
+            
+            // Act.
+            result = await csvTransmorgrifier.ParseAsync(data);
+            
             // Assert.
             result.Listings.Count.ShouldBe(numberOfListings);
 
@@ -52,78 +52,19 @@ namespace OpenRealEstate.Transmorgrifiers.Csv.Tests.FileServiceTests
         }
 
         [Fact]
-        public async Task GivenAFileWithNoContent_ParseAsync_ReturnsAnError()
-        {
-            // Arrange.
-            var csvTransmorgrifier = new CsvTransmorgrifier();
-            ParsedResult result;
-            using (var streamReader = new StreamReader("Sample Data\\EmptyFile.csv"))
-            {
-                // Act.
-                result = await csvTransmorgrifier.ParseAsync(streamReader);
-            }
-
-            // Assert.
-            result.Listings.Count.ShouldBe(0);
-            result.Errors.Count.ShouldBe(1);
-            var firstError = result.Errors.First();
-            firstError.ExceptionMessage.ShouldBe("No header record was found.");
-            firstError.InvalidData.ShouldBe("reading csv data.");
-        }
-
-        [Fact]
         public async Task GivenAFileWithAMissingHeader_ParseAsync_ReturnsAnError()
         {
             // Arrange.
             var csvTransmorgrifier = new CsvTransmorgrifier();
             ParsedResult result;
-            using (var streamReader = new StreamReader("Sample Data\\2017-09-24-ACT-rent-missing-header.csv"))
-            {
-                // Act.
-                result = await csvTransmorgrifier.ParseAsync(streamReader);
-            }
+            var data = File.ReadAllText($"Sample Data\\2017-09-24-ACT-rent-missing-header.csv");
 
+            // Act.
+            result = await csvTransmorgrifier.ParseAsync(data);
+        
             // Assert.
             result.Listings.Count.ShouldBe(0);
             result.Errors.Count.ShouldBe(5); // 1x Header missing error, 4x failed to parse data because of missing header.
-            result.Errors.First().ExceptionMessage.ShouldNotBeNullOrWhiteSpace();
-            result.Errors.First().InvalidData.ShouldNotBeNullOrWhiteSpace();
-        }
-
-        [Fact]
-        public async Task GivenAFileWithSomeBadPostcodeRowData_ParseAsync_ReturnsAnError()
-        {
-            // Arrange.
-            var csvTransmorgrifier = new CsvTransmorgrifier();
-            ParsedResult result;
-            using (var streamReader = new StreamReader("Sample Data\\2017-09-24-ACT-rent-bad-postcode-data.csv"))
-            {
-                // Act.
-                result = await csvTransmorgrifier.ParseAsync(streamReader);
-            }
-
-            // Assert.
-            result.Listings.Count.ShouldBe(185); // 185 rows of legit data.
-            result.Errors.Count.ShouldBe(3); // 3 rows had bad postcode values.
-            result.Errors.First().ExceptionMessage.ShouldNotBeNullOrWhiteSpace();
-            result.Errors.First().InvalidData.ShouldNotBeNullOrWhiteSpace();
-        }
-
-        [Fact]
-        public async Task GivenAFileWithSomeBadPropertyTypeRowData_ParseAsync_ReturnsAnError()
-        {
-            // Arrange.
-            var csvTransmorgrifier = new CsvTransmorgrifier();
-            ParsedResult result;
-            using (var streamReader = new StreamReader("Sample Data\\2017-09-24-ACT-sold-bad-property-type.csv"))
-            {
-                // Act.
-                result = await csvTransmorgrifier.ParseAsync(streamReader);
-            }
-
-            // Assert.
-            result.Listings.Count.ShouldBe(97); // 97 rows of legit data.
-            result.Errors.Count.ShouldBe(3); // 3 rows had bad postcode values.
             result.Errors.First().ExceptionMessage.ShouldNotBeNullOrWhiteSpace();
             result.Errors.First().InvalidData.ShouldNotBeNullOrWhiteSpace();
         }
@@ -134,11 +75,10 @@ namespace OpenRealEstate.Transmorgrifiers.Csv.Tests.FileServiceTests
             // Arrange.
             var csvTransmorgrifier = new CsvTransmorgrifier();
             ParsedResult result;
-            using (var streamReader = new StreamReader("Sample Data\\2017-09-24-ACT-rent-bad-row-data.csv"))
-            {
-                // Act.
-                result = await csvTransmorgrifier.ParseAsync(streamReader);
-            }
+            var data = File.ReadAllText("Sample Data\\2017-09-24-ACT-rent-bad-row-data.csv");
+            
+            // Act.
+            result = await csvTransmorgrifier.ParseAsync(data);
 
             // Assert.
             result.Listings.Count.ShouldBe(5); // 6 rows of legit data.
@@ -153,12 +93,11 @@ namespace OpenRealEstate.Transmorgrifiers.Csv.Tests.FileServiceTests
             // Arrange.
             var csvTransmorgrifier = new CsvTransmorgrifier();
             ParsedResult result;
-            using (var streamReader = new StreamReader("Sample Data\\2017-09-24-ACT-rent-missing-row-data.csv"))
-            {
-                // Act.
-                result = await csvTransmorgrifier.ParseAsync(streamReader);
-            }
-
+            var data = File.ReadAllText("Sample Data\\2017-09-24-ACT-rent-missing-row-data.csv");
+            
+            // Act.
+            result = await csvTransmorgrifier.ParseAsync(data);
+            
             // Assert.
             result.Listings.Count.ShouldBe(6); // 6 rows of legit data.
             result.Errors.Count.ShouldBe(4); // 4 rows were missing the IMAGE field data.

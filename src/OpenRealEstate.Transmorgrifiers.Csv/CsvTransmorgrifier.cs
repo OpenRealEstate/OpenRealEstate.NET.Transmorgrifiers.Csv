@@ -1,25 +1,24 @@
-﻿using CsvHelper;
-using CsvHelper.Configuration;
-using OpenRealEstate.Core;
-using OpenRealEstate.Transmorgrifiers.Core;
-using OpenRealEstate.Validation;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper;
+using CsvHelper.Configuration;
+using OpenRealEstate.Core;
+using OpenRealEstate.Transmorgrifiers.Core;
 
 namespace OpenRealEstate.Transmorgrifiers.Csv
 {
-    public class CsvTransmorgrifier : ICsvTransmorgrifier
+    public class CsvTransmorgrifier : ITransmorgrifier
     {
         /// <inheritdoc />
         public string Name => "CSV";
 
         /// <inheritdoc />
-        public ParsedResult Parse(string data, 
-                                  Listing existingListing = null, 
-                                  bool areBadCharactersRemoved = false)
+        public async Task<ParsedResult> ParseAsync(string data, 
+                                                   Listing existingListing = null, 
+                                                   bool areBadCharactersRemoved = false)
         {
             if (string.IsNullOrWhiteSpace(data))
             {
@@ -28,13 +27,11 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
 
             using (var stringReader = new StringReader(data))
             {
-                return Task.Run(() => ParseAsync(stringReader))
-                            .GetAwaiter()
-                            .GetResult();
+                return await ParseAsync(stringReader);
             }
         }
 
-        public async Task<ParsedResult> ParseAsync(TextReader textReader)
+        private async Task<ParsedResult> ParseAsync(TextReader textReader)
         {
             if (textReader == null)
             {
@@ -82,16 +79,14 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
                         // NOTE: the listing is null if it failed to read/parse the line.
                         if (listing != null)
                         {
-                            listingResults.Add(new ListingResult
+                            var listingResult = new ListingResult
                             {
                                 Listing = listing,
                                 SourceData = csvReader.ToString()
-                            });
+                            };
+                            result.Listings.Add(listingResult);
                         }
                     }
-
-                    // Validate all the listings that were parsed.
-                    ValidateListings(listingResults, result);
                 }
             }
             catch (Exception exception)
@@ -124,16 +119,18 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
                 parsedResult.Errors.Add(parsedError);
             }
 
-            void ReadingExceptionOccured(CsvHelperException exception)
+            bool ReadingExceptionOccured(CsvHelperException exception)
             {
                 var parsedError = new ParsedError($"Reading exception: {exception.Message}", exception.ReadingContext.RawRecord);
                 parsedResult.Errors.Add(parsedError);
+
+                return false;
             }
 
             var configuration = new Configuration
             {
                 HasHeaderRecord = true,
-                PrepareHeaderForMatch = header => header.ToLowerInvariant(),
+                PrepareHeaderForMatch = (header, index) => header.ToLowerInvariant(),
                 BadDataFound = BadDataFound,
                 MissingFieldFound = MissingFieldFound,
                 ReadingExceptionOccurred = ReadingExceptionOccured
@@ -164,39 +161,6 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
             }
 
             return listing?.ToOreListing();
-        }
-
-        private void ValidateListings(IEnumerable<ListingResult> listingResults,
-                                      ParsedResult result)
-        {
-            if (listingResults == null)
-            {
-                throw new ArgumentNullException(nameof(listingResults));
-            }
-
-            if (result == null)
-            {
-                throw new ArgumentNullException(nameof(result));
-            }
-
-            foreach (var listingResult in listingResults)
-            {
-                var validationResult = ValidatorMediator.Validate(listingResult.Listing);
-                if (validationResult.IsValid)
-                {
-                    result.Listings.Add(listingResult);
-                }
-                else
-                {
-                    // We failed validation for this listing.
-                    var errorMessages = string.Join(". ",
-                                                    (from error in validationResult.Errors
-                                                     select error.ErrorMessage));
-                    var errorMessage = $"Listing '{listingResult.Listing}' failed validation: {errorMessages}";
-                    var rowData = JsonConvertHelpers.SerializeObject(listingResult.Listing);
-                    result.Errors.Add(new ParsedError(errorMessage, rowData));
-                }
-            }
         }
     }
 }
