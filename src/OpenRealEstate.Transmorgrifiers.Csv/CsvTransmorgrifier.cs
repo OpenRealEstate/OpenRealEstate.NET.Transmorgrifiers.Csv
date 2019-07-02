@@ -16,9 +16,9 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
         public string Name => "CSV";
 
         /// <inheritdoc />
-        public async Task<ParsedResult> ParseAsync(string data, 
-                                                   Listing existingListing = null, 
-                                                   bool areBadCharactersRemoved = false)
+        public ParsedResult Parse(string data, 
+                                  Listing existingListing = null, 
+                                  bool areBadCharactersRemoved = false)
         {
             if (string.IsNullOrWhiteSpace(data))
             {
@@ -27,7 +27,9 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
 
             using (var stringReader = new StringReader(data))
             {
-                return await ParseAsync(stringReader);
+                return Task.Run(() => ParseAsync(stringReader))
+                           .GetAwaiter()
+                           .GetResult();
             }
         }
 

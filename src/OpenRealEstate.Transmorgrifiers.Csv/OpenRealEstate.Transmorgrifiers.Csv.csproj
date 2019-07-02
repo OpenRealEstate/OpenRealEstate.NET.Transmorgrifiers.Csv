@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -19,7 +19,7 @@
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="12.1.2" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="OpenRealEstate.Transmorgrifiers.Core" Version="13.0.0-dev" />
+    <PackageReference Include="OpenRealEstate.Transmorgrifiers.Core" Version="14.0.0-dev" />
   </ItemGroup>
 
 </Project>
