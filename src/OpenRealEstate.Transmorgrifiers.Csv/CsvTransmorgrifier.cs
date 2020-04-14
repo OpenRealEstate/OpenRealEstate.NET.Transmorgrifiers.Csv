@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -100,7 +101,7 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
             return result;
         }
 
-        private Configuration InitializeCsvReaderConfiguration(ParsedResult parsedResult)
+        private CsvConfiguration InitializeCsvReaderConfiguration(ParsedResult parsedResult)
         {
             if (parsedResult == null)
             {
@@ -129,7 +130,7 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
                 return false;
             }
 
-            var configuration = new Configuration
+            var configuration = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
                 HasHeaderRecord = true,
                 PrepareHeaderForMatch = (header, index) => header.ToLowerInvariant(),

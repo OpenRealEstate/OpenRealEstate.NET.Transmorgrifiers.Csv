@@ -17,9 +17,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="12.1.2" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="OpenRealEstate.Transmorgrifiers.Core" Version="14.0.0-dev" />
+    <PackageReference Include="CsvHelper" Version="15.0.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="OpenRealEstate.Transmorgrifiers.Core" Version="16.0.0-dev" />
   </ItemGroup>
 
 </Project>

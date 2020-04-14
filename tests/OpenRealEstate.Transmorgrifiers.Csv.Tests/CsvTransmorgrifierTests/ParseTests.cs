@@ -39,7 +39,7 @@ namespace OpenRealEstate.Transmorgrifiers.Csv.Tests.FileServiceTests
                                                                   bool isResidentialListing)
         {
             // Arrange.
-            var content = File.ReadAllText($"Sample Data\\{fileName}");
+            var content = File.ReadAllText($"Sample Data//{fileName}");
 
             var csvTransmorgrifier = new CsvTransmorgrifier();
 
@@ -76,7 +76,7 @@ namespace OpenRealEstate.Transmorgrifiers.Csv.Tests.FileServiceTests
                                                                        string street)
         {
             // Arrange.
-            var content = File.ReadAllText($"Sample Data\\2017-09-24-ACT-sold-address-is-to-be-replaced.csv");
+            var content = File.ReadAllText($"Sample Data//2017-09-24-ACT-sold-address-is-to-be-replaced.csv");
             content = content.Replace("<<REPLACE ADDRESS HERE>>", address);
 
             var csvTransmorgrifier = new CsvTransmorgrifier();
@@ -107,7 +107,7 @@ namespace OpenRealEstate.Transmorgrifiers.Csv.Tests.FileServiceTests
             // Arrange.
             var csvTransmorgrifier = new CsvTransmorgrifier();
             ParsedResult result;
-            var data = File.ReadAllText($"Sample Data\\2017-09-24-ACT-rent-missing-header.csv");
+            var data = File.ReadAllText($"Sample Data//2017-09-24-ACT-rent-missing-header.csv");
 
             // Act.
             result = csvTransmorgrifier.Parse(data);
@@ -125,7 +125,7 @@ namespace OpenRealEstate.Transmorgrifiers.Csv.Tests.FileServiceTests
             // Arrange.
             var csvTransmorgrifier = new CsvTransmorgrifier();
             ParsedResult result;
-            var data = File.ReadAllText("Sample Data\\2017-09-24-ACT-rent-bad-row-data.csv");
+            var data = File.ReadAllText("Sample Data//2017-09-24-ACT-rent-bad-row-data.csv");
 
             // Act.
             result = csvTransmorgrifier.Parse(data);
@@ -143,7 +143,7 @@ namespace OpenRealEstate.Transmorgrifiers.Csv.Tests.FileServiceTests
             // Arrange.
             var csvTransmorgrifier = new CsvTransmorgrifier();
             ParsedResult result;
-            var data = File.ReadAllText("Sample Data\\2017-09-24-ACT-rent-missing-row-data.csv");
+            var data = File.ReadAllText("Sample Data//2017-09-24-ACT-rent-missing-row-data.csv");
 
             // Act.
             result = csvTransmorgrifier.Parse(data);
