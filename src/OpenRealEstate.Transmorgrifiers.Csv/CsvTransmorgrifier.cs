@@ -54,7 +54,7 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
                 {
                     csvReader.Read();
                     csvReader.ReadHeader();
-                    var headers = csvReader.Context.HeaderRecord;
+                    var headers = csvReader.HeaderRecord;
 
                     bool isASoldListing;
                     if (headers.Contains("sold_date", StringComparer.OrdinalIgnoreCase))
@@ -108,23 +108,21 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
                 throw new ArgumentNullException(nameof(parsedResult));
             }
 
-            void BadDataFound(ReadingContext context)
+            void BadDataFound(BadDataFoundArgs args)
             {
-                var parsedError = new ParsedError($"Bad data found on row '{context.RawRow}'", context.RawRecord);
+                var parsedError = new ParsedError($"Bad data found on row '{args.RawRecord}'", args.RawRecord);
                 parsedResult.Errors.Add(parsedError);
             }
 
-            void MissingFieldFound(string[] headerNames,
-                                   int index,
-                                   ReadingContext context)
+            void MissingFieldFound(MissingFieldFoundArgs args)
             {
-                var parsedError = new ParsedError($"Field with names ['{string.Join("', '", headerNames)}'] at index '{index}' was not found.", context.RawRecord);
+                var parsedError = new ParsedError($"Field with names ['{string.Join("', '", args.HeaderNames)}'] at index '{args.Index}' was not found.", args.ToString());
                 parsedResult.Errors.Add(parsedError);
             }
 
-            bool ReadingExceptionOccured(CsvHelperException exception)
+            bool ReadingExceptionOccured(ReadingExceptionOccurredArgs args)
             {
-                var parsedError = new ParsedError($"Reading exception: {exception.Message}", exception.ReadingContext.RawRecord);
+                var parsedError = new ParsedError($"Reading exception: {args.Exception.Message}", args.Exception.Message);
                 parsedResult.Errors.Add(parsedError);
 
                 return false;
@@ -133,14 +131,16 @@ namespace OpenRealEstate.Transmorgrifiers.Csv
             var configuration = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
                 HasHeaderRecord = true,
-                PrepareHeaderForMatch = (header, index) => header.ToLowerInvariant(),
+                PrepareHeaderForMatch = (args) => args.Header.ToLowerInvariant(),
                 BadDataFound = BadDataFound,
                 MissingFieldFound = MissingFieldFound,
                 ReadingExceptionOccurred = ReadingExceptionOccured
             };
 
-            configuration.RegisterClassMap<CsvResidentialListingCsvMap>();
-            configuration.RegisterClassMap<CsvRentalListingCsvMap>();
+            var context = new CsvContext(configuration);
+
+            context.RegisterClassMap<CsvResidentialListingCsvMap>();
+            context.RegisterClassMap<CsvRentalListingCsvMap>();
 
             return configuration;
         }

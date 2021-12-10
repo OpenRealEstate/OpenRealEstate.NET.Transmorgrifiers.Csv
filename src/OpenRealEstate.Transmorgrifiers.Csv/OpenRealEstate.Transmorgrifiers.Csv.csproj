@@ -1,25 +1,33 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net451;netstandard2.0</TargetFrameworks>
-	<Version>0.0.0</Version>
-	<Product>OpenRealEstate - .NET CSV Transmorgrifier</Product>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>OpenRealEstate.Transmorgrifiers.Csv</PackageId>
+    <Product>OpenRealEstate - .NET CSV Transmorgrifier</Product>
     <Authors>Justin Adler</Authors>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/OpenRealEstate/OpenRealEstate.NET.Core/master/LICENSE.txt</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/OpenRealEstate/OpenRealEstate</PackageProjectUrl>
+    <Company>OpenRealEstate</Company>
+    <Copyright>2018</Copyright>
     <Description>These are the core base class libraries that form the foundation for the .NET OpenRealEstate library.</Description>
+    <PackageProjectUrl>https://github.com/OpenRealEstate/OpenRealEstate</PackageProjectUrl>
     <PackageTags>ore ore.net realestate openrealestate</PackageTags>
     <PackageIconUrl>https://avatars2.githubusercontent.com/u/7205481?s=64</PackageIconUrl>
-    <RepositoryUrl>https://github.com/OpenRealEstate/OpenRealEstate.NET.Core</RepositoryUrl>
+    <RepositoryUrl>https://github.com/OpenRealEstate/OpenRealEstate.NET.Transmorgrifiers.Csv</RepositoryUrl>
     <RepositoryType>c#</RepositoryType>
-    <Copyright>2018</Copyright>
-    <Company>OpenRealEstate</Company>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="15.0.4" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="OpenRealEstate.Transmorgrifiers.Core" Version="19.0.0-dev" />
+    <PackageReference Include="CsvHelper" Version="27.2.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="OpenRealEstate.Transmorgrifiers.Core" Version="110.0.0-beta" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+  
 </Project>
